@@ -65,11 +65,11 @@ class passwd_state:
             conn.new_state(None)
             return
         conn.child.sendline(passwd)
-        index = conn.child.expect(["sername:","nter:","ccount:","ogin:","ssword:",pexpect.TIMEOUT,pexpect.EOF],timeout=30)
-        if index == 5:
+        index = conn.child.expect(["[>$~/]","sername:","nter:","ccount:","ogin:","ssword:",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+        if index == 0:
             print "Got password %s:%s-%s" % (conn.ip,conn.auth[0],conn.auth[1])
             conn.new_state(confirm_state)
-        elif index < 4:
+        elif index < 5:
             conn.new_state(user_state)
         else:
             conn.new_state(conn_state)
