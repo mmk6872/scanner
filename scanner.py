@@ -127,7 +127,7 @@ class sniffer(threading.Thread):
 
     def run(self):
         print "Start to sniffing..."
-        sniff(filter="tcp and dst port 2222 and (src port 23 or src port 2323)",prn=cook)
+        sniff(filter="tcp and dst port 2222 and src port 23",prn=cook)
 
 
 #[(ip1,...,ip255),(...),(),...]
@@ -138,7 +138,7 @@ class spewer(threading.Thread):
 
     def run(self):
         print "Start to spewing..."
-        pkt = IP()/TCP(sport=2222,dport=[23,2323],flags="S")
+        pkt = IP()/TCP(sport=2222,dport=[23],flags="S")
         for pair in self.ip_pair:
             for ip in pair:
                 pkt[IP].dst = num2ip(ip)
@@ -184,25 +184,25 @@ class Scanner(threading.Thread):
     def run(self):
         print "Starting scanner threading"
         while True:
-            ip = None
+            ip_port = None
             queueLocker.acquire()
             if self.queue.empty():
                 queueLocker.release()
                 time.sleep(3)
                 continue
             try:
-                ip = self.queue.get(block=False)
+                ip_port = self.queue.get(block=False)
             except:
                 pass
             queueLocker.release()
-            if ip: 
+            if ip_port: 
                 #print "[scanner] Try to auth %s" % ip
                 pass
             else:
                 time.sleep(3)
                 continue
 
-            con = Connection(ip,copy.deepcopy(auth_queue))
+            con = Connection(ip_port,copy.deepcopy(auth_queue))
             while con._state:
                 con.run()
             con.exit()
