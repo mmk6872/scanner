@@ -3,6 +3,7 @@
 
 
 import heapq
+import copy
 import time
 import threading
 from random import choice
@@ -201,10 +202,11 @@ class Scanner(threading.Thread):
                 time.sleep(3)
                 continue
 
-            con = Connection(ip,auth_queue)
+            con = Connection(ip,copy.deepcopy(auth_queue))
             while con._state:
                 con.run()
             con.exit()
+            del con
                 
 if __name__ == "__main__":
     controlP()
