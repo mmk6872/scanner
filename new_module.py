@@ -39,11 +39,13 @@ class conn_state:
 class user_state:
     @staticmethod
     def _run(conn):
-        if conn.auth = self.auth_queue.pop():
-            user = conn.auth[0]
-        else:
+        try:
+            conn.auth = conn.auth_queue.pop()
+        except:
             conn.new_state(None)
             return
+
+        user = conn.auth[0]
         conn.child.sendline(user)
         index = conn.child.expect(["ssword","sername","nter","ccount","ogin",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
         if index == 0:
@@ -57,7 +59,7 @@ class passwd_state:
     @staticmethod
     def _run(conn):
         if conn.auth:
-            passwd = conn.auth[1]:
+            passwd = conn.auth[1]
         else:
             conn.new_state(None)
             return
