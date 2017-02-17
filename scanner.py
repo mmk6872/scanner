@@ -13,6 +13,7 @@ import json
 import sys
 from new_module import *
 from scapy.all import *
+from collections import deque
 
 try:
     import xml.etree.cElementTree as ET
@@ -35,7 +36,7 @@ class PriorityQueue:
         return heapq.heappop(self._queue)[-1]
 
 #this should be a dict
-auth_table = [("user","password",1),("tech","tech",1),("root","Zte521",1),("root","xc3511",1),("root","vizxv",1),("admin","admin",1),("root","admin",1),("root","888888",1),("root","xmhdipc",1),("root","juantech",1),("root","123456",1),("root","54321",1),("support","support",1),("root","",1),("admin","password",1),("root","root",1),("root","root",1),("user","user",1),("admin","admin1234",1),("admin","smcadmin",1),("root","klv123",1),("root","klv1234",1),("root","hi3518",1),("root","jvbzd",1),("root","anko",1),("root","zlxx.",1),("root","system",1)]
+auth_table = [("user","password",10),("tech","tech",1),("root","Zte521",2),("root","xc3511",2),("root","vizxv",1),("admin","admin",1),("root","admin",1),("root","888888",1),("root","xmhdipc",1),("root","juantech",1),("root","123456",1),("root","54321",1),("support","support",1),("root","",1),("admin","password",1),("root","root",1),("root","root",1),("user","user",1),("admin","admin1234",1),("admin","smcadmin",1),("root","klv123",1),("root","klv1234",1),("root","hi3518",1),("root","jvbzd",1),("root","anko",1),("root","zlxx.",1),("root","system",1)]
 
 auth_queue = PriorityQueue()
 for item in auth_table:
@@ -45,6 +46,7 @@ for item in auth_table:
 queue = Queue.Queue()
 queueLocker = threading.Lock()
 ipLocker = threading.Lock()
+ip_prompt_queue = deque(maxlen = 100)
 
 def ip2num(ip,bigendian = True):
     ip = [int(x) for x in ip.split('.')]
@@ -116,8 +118,9 @@ def controlP():
 
 def cook(pkt):
     try:
-        if pkt[TCP].flags == 18:
+        if pkt[TCP].flags == 18 and pkt[IP].src not in ip_prompt_queue:
             queue.put(pkt[IP].src)
+            ip_prompt_queue.append(pkt[IP].src)
     except:
         pass
 
