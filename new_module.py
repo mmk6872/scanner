@@ -87,7 +87,7 @@ class confirm_state:
             cursor.execute("INSERT INTO auth_table(ip,port,username,password,loc) values('%s','%d','%s','%s','%s')" % (conn.ip,23,user,passwd,IP.find(conn.ip)))
             db.commit()
             print "[report] One result import to database"
-        except e:
+        except:
             db.rollback()
         conn.new_state(None)
         db.close()
