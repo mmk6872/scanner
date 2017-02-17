@@ -27,9 +27,9 @@ class conn_state:
     def _run(conn):
         try:
             conn.child = pexpect.spawn("telnet %s" % conn.ip)
-            index = conn.child.expect(["sername","nter","ccount","ogin","eject",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+            index = conn.child.expect(["sername:","nter:","ccount:","ogin:","eject",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
             if index < 4:
-                print "Got flag %s" % conn.ip
+                #print "Got flag %s" % conn.ip
                 conn.new_state(user_state)
             else:
                 conn.new_state(None)
@@ -47,7 +47,7 @@ class user_state:
 
         user = conn.auth[0]
         conn.child.sendline(user)
-        index = conn.child.expect(["ssword","sername","nter","ccount","ogin",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+        index = conn.child.expect(["ssword:","sername:","nter:","ccount:","ogin:",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
         if index == 0:
             conn.new_state(passwd_state)
         elif index < 5:
@@ -64,7 +64,7 @@ class passwd_state:
             conn.new_state(None)
             return
         conn.child.sendline(passwd)
-        index = conn.child.expect(["ssword","sername","nter","ccount","ogin",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+        index = conn.child.expect(["ssword:","sername:","nter:","ccount:","ogin:",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
         if index == 5:
             print "Got password %s:%s-%s" % (conn.ip,conn.auth[0],conn.auth[1])
             conn.new_state(confirm_state)
