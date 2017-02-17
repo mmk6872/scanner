@@ -10,6 +10,6 @@ CREATE TABLE auth_table (
 		password VARCHAR(255),
 		loc VARCHAR(255),
 		PRIMARY KEY (id),
-                UNIQUE ip_idx(ip)
+		UNIQUE ip_idx(ip)
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
