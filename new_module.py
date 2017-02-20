@@ -44,10 +44,10 @@ class user_state:
             conn.new_state(None)
             return
         conn.child.sendline(user)
-        index = conn.child.expect(["ssword","sername","nter","ccount",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+        index = conn.child.expect(["ssword","sername","nter","ccount","ogin",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
         if index == 0:
             conn.new_state(passwd_state)
-        elif index < 4:
+        elif index < 5:
             conn.new_state(user_state)
             conn.index = conn.index + 1
         else:
@@ -62,14 +62,14 @@ class passwd_state:
             conn.new_state(None)
             return
         conn.child.sendline(passwd)
-        index = conn.child.expect(["ssword","sername","nter","ccount",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
-        if index == 4:
+        index = conn.child.expect(["ssword","sername","nter","ccount","ogin",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+        if index == 5:
             print "Got password %s:%s-%s" % (conn.ip,conn.auth_pair[conn.index][0],passwd)
             conn.new_state(confirm_state)
         elif index == 0:
             conn.new_state(conn_state)
             conn.index = conn.index + 1
-        elif index < 4:
+        elif index < 5:
             conn.new_state(user_state)
             conn.index = conn.index + 1
 
