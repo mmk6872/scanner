@@ -26,8 +26,8 @@ class conn_state:
     def _run(conn):
         try:
             conn.child = pexpect.spawn("telnet %s" % conn.ip)
-            index = conn.child.expect(["sername","nter","ccount","eject",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
-            if index < 3:
+            index = conn.child.expect(["sername","nter","ccount","ogin","eject",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+            if index < 4:
                 print "Got flag %s" % conn.ip
                 conn.new_state(user_state)
             else:
