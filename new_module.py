@@ -3,11 +3,12 @@ import MySQLdb
 
 
 class Connection:
-    def __init__(self,ip,auth_pair):
+    def __init__(self,ip,auth_queue):
         self.new_state(conn_state)
-        self.auth_pair = auth_pair
+        self.auth_queue = auth_queue
         self.ip = ip
         self.index = 0
+        self.auth = None
         self.child = None
 
 
@@ -38,8 +39,8 @@ class conn_state:
 class user_state:
     @staticmethod
     def _run(conn):
-        if conn.auth_pair[conn.index]:
-            user = conn.auth_pair[conn.index][0]
+        if conn.auth = self.auth_queue.pop():
+            user = conn.auth[0]
         else:
             conn.new_state(None)
             return
@@ -49,15 +50,14 @@ class user_state:
             conn.new_state(passwd_state)
         elif index < 5:
             conn.new_state(user_state)
-            conn.index = conn.index + 1
         else:
             conn.new_state(None)
 
 class passwd_state:
     @staticmethod
     def _run(conn):
-        if conn.auth_pair[conn.index][1]:
-            passwd = conn.auth_pair[conn.index][1]
+        if conn.auth:
+            passwd = conn.auth[1]:
         else:
             conn.new_state(None)
             return
@@ -68,16 +68,14 @@ class passwd_state:
             conn.new_state(confirm_state)
         elif index == 0:
             conn.new_state(conn_state)
-            conn.index = conn.index + 1
         elif index < 5:
             conn.new_state(user_state)
-            conn.index = conn.index + 1
 
 class confirm_state:
     @staticmethod
     def _run(conn):
         try:
-            user,passwd = conn.auth_pair[conn.index]
+            user,passwd = conn.auth
             db = MySQLdb.connect("localhost","root","","auth",charset="utf8")
             cursor = db.cursor()
             cursor.execute("INSERT INTO auth_table(ip,port,username,password) values('%s','%d','%s','%s')" % (conn.ip,23,user,passwd,))

@@ -2,6 +2,7 @@
 #encoding:utf-8
 
 
+import heapq
 import time
 import threading
 from random import choice
@@ -20,9 +21,24 @@ except ImportError:
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+class PriorityQueue:
+    def __init__(self):
+        self._queue = []
+        self._index = 0
+
+    def push(self,pair,priority):
+        heapq.heappush(self._queue,(-priority,self._index,pair))
+        self._index += 1
+
+    def pop(self):
+        return heapq.heappop(self._queue)[-1]
 
 #this should be a dict
-auth_table = [("user","password"),("tech","tech"),("root","Zte521"),("root","xc3511"),("root","vizxv"),("admin","admin"),("root","admin"),("root","888888"),("root","xmhdipc"),("root","juantech"),("root","123456"),("root","54321"),("support","support"),("root",""),("admin","password"),("root","root"),("root","root"),("user","user"),("admin","admin1234"),("admin","smcadmin"),("root","klv123"),("root","klv1234"),("root","hi3518"),("root","jvbzd"),("root","anko"),("root","zlxx."),("root","system")]
+auth_table = [("user","password",1),("tech","tech",1),("root","Zte521",1),("root","xc3511",1),("root","vizxv",1),("admin","admin",1),("root","admin",1),("root","888888",1),("root","xmhdipc",1),("root","juantech",1),("root","123456",1),("root","54321",1),("support","support",1),("root","",1),("admin","password",1),("root","root",1),("root","root",1),("user","user",1),("admin","admin1234",1),("admin","smcadmin",1),("root","klv123",1),("root","klv1234",1),("root","hi3518",1),("root","jvbzd",1),("root","anko",1),("root","zlxx.",1),("root","system",1)]
+
+auth_queue = PriorityQueue()
+for item in auth_table:
+    auth_queue.push(item[0:2],item[-1])
 
 
 queue = Queue.Queue()
@@ -185,7 +201,7 @@ class Scanner(threading.Thread):
                 time.sleep(3)
                 continue
 
-            con = Connection(ip,auth_table)
+            con = Connection(ip,auth_queue)
             while con._state:
                 con.run()
             con.exit()
