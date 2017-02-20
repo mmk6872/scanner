@@ -86,3 +86,4 @@ class confirm_state:
         except:
             db.rollback()
         conn.new_state(None)
+        db.close()
