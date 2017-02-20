@@ -38,7 +38,7 @@ class conn_state:
 class user_state:
     @staticmethod
     def _run(conn):
-        if conn.auth_pair[conn.index][0]:
+        if conn.auth_pair[conn.index]:
             user = conn.auth_pair[conn.index][0]
         else:
             conn.new_state(None)
