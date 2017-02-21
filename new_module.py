@@ -1,5 +1,6 @@
 import pexpect
 import MySQLdb
+import IP
 
 
 class Connection:
@@ -64,7 +65,7 @@ class passwd_state:
             conn.new_state(None)
             return
         conn.child.sendline(passwd)
-        index = conn.child.expect(["sername:","nter:","ccount:","ogin:","ssword:",pexpect.TIMEOUT,pexpect.EOF],timeout=10)
+        index = conn.child.expect(["sername:","nter:","ccount:","ogin:","ssword:",pexpect.TIMEOUT,pexpect.EOF],timeout=30)
         if index == 5:
             print "Got password %s:%s-%s" % (conn.ip,conn.auth[0],conn.auth[1])
             conn.new_state(confirm_state)
@@ -83,7 +84,7 @@ class confirm_state:
                 return
             db = MySQLdb.connect("localhost","root","","auth",charset="utf8")
             cursor = db.cursor()
-            cursor.execute("INSERT INTO auth_table(ip,port,username,password) values('%s','%d','%s','%s')" % (conn.ip,23,user,passwd,))
+            cursor.execute("INSERT INTO auth_table(ip,port,username,password,loc) values('%s','%d','%s','%s','%s')" % (conn.ip,23,user,passwd,IP.find(ip)))
             db.commit()
             print "[report] One result import to database"
         except:
