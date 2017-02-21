@@ -202,7 +202,7 @@ class Scanner(threading.Thread):
                 time.sleep(3)
                 continue
 
-            con = Connection(ip_port,copy.deepcopy(auth_queue))
+            con = Connection(copy.deppcopy(ip_port),copy.deepcopy(auth_queue))
             while con._state:
                 con.run()
             con.exit()
