@@ -23,6 +23,17 @@ class Connection:
         if self.child:
             self.child.close(force=True)
 
+    def get_ip(self):
+        for pair in auth_queue:
+            if pair is tuple:
+                yield pair
+            else:
+                if ENABLE_RANDOM:
+                    yield get_random_ip()
+                else:
+                    raise EMPTY_IP_ERROR
+        
+
 class conn_state:
     @staticmethod
     def _run(conn):
@@ -41,7 +52,7 @@ class user_state:
     @staticmethod
     def _run(conn):
         try:
-            conn.auth = conn.auth_queue.pop()
+            conn.auth = conn.get_ip()
         except:
             conn.new_state(None)
             return

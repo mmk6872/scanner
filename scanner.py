@@ -47,6 +47,7 @@ queue = Queue.Queue()
 queueLocker = threading.Lock()
 ipLocker = threading.Lock()
 ip_prompt_queue = deque(maxlen = 100)
+ENABLE_RANDOM = False
 
 def ip2num(ip,bigendian = True):
     ip = [int(x) for x in ip.split('.')]
