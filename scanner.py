@@ -108,10 +108,10 @@ def controlP():
         scanner_list.append(t)
 
     while True:
-        global last_recv
+        global lastRecv
         global exitFlag
         time.sleep(1)
-        if time.time() - last_recv > 30 and exitFlag:
+        if time.time() - lastRecv > 30 and exitFlag:
             break
 
 def cook(pkt):
@@ -143,7 +143,7 @@ class spewer(threading.Thread):
         self.ip_pair = read_ip(filename)
 
     def run(self):
-        global flags
+        global exitFlag
         print "Start to spewing..."
         pkt = IP()/TCP(sport=2222,dport=[23],flags="S")
         for pair in self.ip_pair:
