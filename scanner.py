@@ -43,6 +43,8 @@ for item in auth_table:
     auth_queue.push(item[0:2],item[-1])
 
 
+exitFlag = 0
+lastRecv = time.time()
 queue = Queue.Queue()
 queueLocker = threading.Lock()
 ipLocker = threading.Lock()
@@ -83,7 +85,6 @@ def controlP():
     
     spewer_thread = spewer("ip.xml")
     try:
-       spewer_thread.daemon = True
        spewer_thread.start()
     except:
        print "[Error] Start spewer faild!"
@@ -106,18 +107,17 @@ def controlP():
             pass
         scanner_list.append(t)
 
-    while not queue.empty():
-        pass
-
-    exitFlag = 1
-
-    spewer_thread.join()
-    sniffer_thread.join()
-    for t in scanner_list:
-        t.join()
+    while True:
+        global last_recv
+        global exitFlag
+        time.sleep(1)
+        if time.time() - last_recv > 30 and exitFlag:
+            break
 
 def cook(pkt):
     try:
+        global lastRecv
+        lastRecv = time.time()
         if pkt[TCP].flags == 18 and pkt[IP].src not in ip_prompt_queue:
             queue.put(pkt[IP].src)
             ip_prompt_queue.append(pkt[IP].src)
@@ -126,7 +126,10 @@ def cook(pkt):
 
 class sniffer(threading.Thread):
     def __init_(self):
+        global lastRecv
         threading.Thread.__init__(self)
+        lastRecv = time.time()
+
 
     def run(self):
         print "Start to sniffing..."
@@ -140,6 +143,7 @@ class spewer(threading.Thread):
         self.ip_pair = read_ip(filename)
 
     def run(self):
+        global flags
         print "Start to spewing..."
         pkt = IP()/TCP(sport=2222,dport=[23],flags="S")
         for pair in self.ip_pair:
@@ -149,6 +153,7 @@ class spewer(threading.Thread):
                     send(pkt,verbose=0)
                 except:
                     pass
+        exitFlag = 1
         
 #class Spewer(threading.Thread):
 #    def __init__(self,queue):
