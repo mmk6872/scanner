@@ -42,7 +42,9 @@ auth_queue = PriorityQueue()
 for item in auth_table:
     auth_queue.push(item[0:2],item[-1])
 
-
+#0:runing
+#1:exit spewer
+#2:exit_sniffer
 exitFlag = 0
 lastRecv = time.time()
 queue = Queue.Queue()
@@ -101,7 +103,6 @@ def controlP():
     for i in range(int(sys.argv[1])):
         t = Scanner()
         try:
-            t.daemon = True
             t.start()
         except:
             pass
@@ -194,7 +195,10 @@ class Scanner(threading.Thread):
         while True:
             ip_port = None
             queueLocker.acquire()
-            if self.queue.empty():
+            if self.queue.empty() and exitFlag == 2:
+                queueLocker.release()
+                return
+            elif self.queue.empty():
                 queueLocker.release()
                 time.sleep(3)
                 continue
