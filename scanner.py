@@ -14,6 +14,7 @@ import sys
 from new_module import *
 from scapy.all import *
 from collections import deque
+import IPy
 
 try:
     import xml.etree.cElementTree as ET
@@ -72,7 +73,7 @@ def read_ip(file_xml):
     root = tree.getroot()
     ip_pair = [child.text.strip().split('-') for child in root]
     for x in ip_pair:
-        ip_map.append(xrange(ip2num(x[0]),ip2num(x[1])))
+        ip_map.append(xrange(ip2num(x[0]),ip2num(x[1]) + 1))
 #    return [num2ip(item) for pair in ip_map[0:10] for item in pair] 
     return ip_map
 
@@ -113,6 +114,7 @@ def controlP():
         global exitFlag
         time.sleep(1)
         if time.time() - lastRecv > 30 and exitFlag:
+            exitFlag = 2
             break
 
 def cook(pkt):
